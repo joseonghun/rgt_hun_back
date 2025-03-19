@@ -46,3 +46,4 @@ rebel.xml
 .gradle
 /build/
 .gradletasknamecache
+!/gradle/wrapper/gradle-wrapper.jar
