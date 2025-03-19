@@ -1,0 +1,187 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hun.test.mapper.ApiMapper">
+
+	<select id="selectBooksCount" parameterType="hun.test.dto.CommonDto" resultType="int">
+		SELECT
+			COUNT(tb.id) AS total_record
+		FROM
+			tb_books tb
+		WHERE
+			tb.del_yn <![CDATA[<>]]> 'Y'
+			<if test='searchKeyword != null and searchKeyword != ""'>
+				AND (
+					tb.title LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.author LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.publisher LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.bookDetails LIKE CONCAT('%', #{searchKeyword}, '%')
+				)
+			</if>
+	</select>
+	
+	<select id="selectBooksList" parameterType="hun.test.dto.CommonDto" resultType="hun.test.dto.BooksDto">
+		SELECT
+			tb.id
+			, tb.title
+			, tb.author
+			, COALESCE(tb.publisher, '') AS publisher
+			, COALESCE(tb.publish_dt, '') AS publish_dt
+			, COALESCE(tb.book_details, '') AS book_details
+			, COALESCE(tb.isbn, '') AS isbn
+			, tfm.file_seq AS thumb_url 
+			, COALESCE(tbl.books_amount, 0) AS books_amount
+			, COALESCE(tbl.sell_amount, 0) AS sell_amount
+		FROM
+			tb_books tb 
+		LEFT JOIN
+			(
+			SELECT
+				id
+				, SUM(
+					CASE 
+						WHEN `type` = 'O' OR `type` = 'S' THEN books_amount -1
+						ELSE books_amount
+					END
+				) AS books_amount
+				, SUM(
+					CASE 
+						WHEN `type` = 'S' THEN books_amount
+						WHEN `type` = 'R' THEN books_amount -1
+						ELSE 0
+					END
+				) AS sell_amount
+			FROM
+				tb_books_log tbl
+			GROUP BY
+				id
+			) tbl 
+		ON
+			tb.id = tbl.id 
+		LEFT JOIN
+			tb_file_mng tfm 
+		ON
+			tb.id = cast(tfm.rel_pk as unsigned)
+			AND tfm.rel_table = 'tb_books'
+			AND tfm.rel_column = 'thumbnail'
+			AND tfm.del_yn <![CDATA[<>]]> 'Y'
+		WHERE
+			tb.del_yn <![CDATA[<>]]> 'Y'
+			<if test='searchKeyword != null and searchKeyword != ""'>
+				AND (
+					tb.title LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.author LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.publisher LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.bookDetails LIKE CONCAT('%', #{searchKeyword}, '%')
+				)
+			</if>
+		ORDER BY tb.id DESC
+		LIMIT #{startRow}, #{viewCnt}
+	</select>
+	
+	<select id="selectBooksDetail" parameterType="hun.test.dto.BooksDto" resultType="hun.test.dto.BooksDto">
+		SELECT
+			tb.id
+			, tb.title
+			, tb.author
+			, COALESCE(tb.publisher, '') AS publisher
+			, COALESCE(tb.publish_dt, '') AS publish_dt
+			, COALESCE(tb.book_details, '') AS book_details
+			, COALESCE(tb.isbn, '') AS isbn
+			, CONCAT(#{thumbUrl}, tfm.file_seq) AS thumb_url 
+			, COALESCE(tbl.books_amount, 0) AS books_amount
+			, COALESCE(tbl.sell_amount, 0) AS sell_amount
+		FROM
+			tb_books tb 
+		LEFT JOIN
+			(
+			SELECT
+				id
+				, SUM(
+					CASE 
+						WHEN `type` = 'O' OR `type` = 'S' THEN books_amount * -1
+						ELSE books_amount
+					END
+				) AS books_amount
+				, SUM(
+					CASE 
+						WHEN `type` = 'S' THEN books_amount
+						WHEN `type` = 'R' THEN books_amount * -1
+						ELSE 0
+					END
+				) AS sell_amount
+			FROM
+				tb_books_log tbl
+			GROUP BY
+				id
+			) tbl 
+		ON
+			tb.id = tbl.id 
+		LEFT JOIN
+			tb_file_mng tfm 
+		ON
+			tb.id = cast(tfm.rel_pk as unsigned)
+			AND tfm.rel_table = 'tb_books'
+			AND tfm.rel_column = 'thumbnail'
+			AND tfm.del_yn <![CDATA[<>]]> 'Y'
+		WHERE
+			tb.id = #{id}
+	</select>
+	
+	<insert id="addBooks" parameterType="hun.test.dto.BooksDto" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_books
+		(
+			title
+			, author
+			, publisher
+			, publish_dt
+			, book_details
+			, isbn
+			, crt_dt
+		) values (
+			#{title}
+			, #{author}
+			, #{publisher}
+			, #{publishDt}
+			, #{bookDetails}
+			, #{isbn}
+			, CURRENT_TIMESTAMP
+		)
+	</insert>
+	
+	<update id="updateBooks" parameterType="hun.test.dto.BooksDto">
+		UPDATE
+			tb_books
+		SET
+			title = #{title}
+			, author = #{author}
+			, publisher = #{publisher}
+			, publish_dt = #{publishDt}
+			, book_details = #{bookDetails}
+			, isbn = #{isbn}
+			, udt_dt = CURRENT_TIMESTAMP
+		WHERE
+			id = #{id}
+	</update>
+	
+	<update id="deleteBooks" parameterType="hun.test.dto.BooksDto">
+		UPDATE
+			tb_books
+		SET
+			del_yn = 'Y'
+			, udt_dt = CURRENT_TIMESTAMP
+		WHERE
+			id = #{id}
+	</update>
+	
+	<select id="selectThumbFile" parameterType="String" resultType="Integer">
+		SELECT
+			file_seq
+		FROM
+			tb_file_mng
+		WHERE
+			rel_pk = #{arg0}
+			AND rel_table = 'tb_books'
+			AND rel_column = 'thumbnail'
+			AND del_yn <![CDATA[<>]]> 'Y'
+	</select>
+</mapper>

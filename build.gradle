@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'application'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+    
+}
+
+application {
+    mainClass = 'hun.sample.MainApplication'
+}
+
+group = 'hun.sample'
+version = '1.0.0'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-aop' // AOP
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3' // BOOT
+	implementation 'org.springframework.boot:spring-boot-starter-web' // BOOT
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' // JSP
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	
+	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' // JSP
+	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' // JSP - JSTL
+	
+	compileOnly 'org.projectlombok:lombok' // LOMBOK
+	
+	implementation 'org.springframework.boot:spring-boot-devtools' //BOOT
+	developmentOnly 'org.springframework.boot:spring-boot-devtools' // BOOT
+	runtimeOnly 'com.mysql:mysql-connector-j:8.2.0' // DB
+	annotationProcessor 'org.projectlombok:lombok' // LOMBOK
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' // BOOT
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3' // MYBATIS
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// starter 에 포함된 log 관련 설정 제거
+	implementation('org.springframework.boot:spring-boot-starter-web') {
+		exclude group: 'ch.qos.logback' // logback 제외
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging' // logback 제외
+	}
+	// log
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16' // log
+	implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+	
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
