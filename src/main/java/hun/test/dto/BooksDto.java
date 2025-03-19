@@ -33,7 +33,7 @@ public class BooksDto {
 	private String isbn;
 	
 	// 썸네일 경로
-	private String thumbUrl;
+	private Integer thumbSeq;
 
 	// 현재 수량
 	private Integer booksAmount;

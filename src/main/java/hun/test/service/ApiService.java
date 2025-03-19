@@ -37,12 +37,8 @@ public class ApiService {
 	 * @return
 	 */
 	public List<BooksDto> getBooksList(CommonDto commonDto, HttpServletRequest request) {
-		String thumbPath = request.getRequestURL().toString().replace(request.getRequestURI(), "/api/downFiles/");
 		List<BooksDto> result = apiMapper.selectBooksList(commonDto);
 		
-		for(BooksDto b : result) {
-			b.setThumbUrl(thumbPath + b.getThumbUrl());
-		}
 		return result;
 	}
 	
@@ -52,11 +48,6 @@ public class ApiService {
 	 * @return
 	 */
 	public BooksDto getBooksDetail(BooksDto booksDto, HttpServletRequest request) {
-		System.out.println("schema : " + request.getScheme());
-		System.out.println("serverName : " + request.getServerName());
-		System.out.println("port : " + request.getServerPort());
-		String thumbPath = request.getRequestURL().toString().replace(request.getRequestURI(), "/api/downFiles/");
-		booksDto.setThumbUrl(thumbPath);
 		return apiMapper.selectBooksDetail(booksDto);
 	}
 	
@@ -123,7 +114,6 @@ public class ApiService {
 	public int deleteBooks(String id) {
 		BooksDto booksDto = new BooksDto();
 		booksDto.setId(Integer.parseInt(id));
-		booksDto.setThumbUrl("");	// 에러 방지용
 		BooksDto oldBooks = apiMapper.selectBooksDetail(booksDto);
 		
 		// 기존 파일 제거

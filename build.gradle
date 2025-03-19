@@ -10,7 +10,7 @@ application {
     mainClass = 'hun.test.MainApplication'
 }
 
-group = 'hun.sample'
+group = 'hun.test'
 version = '1.0.0'
 
 java {
@@ -44,7 +44,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-devtools' //BOOT
 	developmentOnly 'org.springframework.boot:spring-boot-devtools' // BOOT
 //	runtimeOnly 'com.mysql:mysql-connector-j:8.2.0' // DB
-	runtimeOnly 'org.postgresql:postgresql:42.7.3'
+	implementation 'org.postgresql:postgresql:42.7.3'
 	annotationProcessor 'org.projectlombok:lombok' // LOMBOK
 	testImplementation 'org.springframework.boot:spring-boot-starter-test' // BOOT
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3' // MYBATIS

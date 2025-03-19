@@ -28,7 +28,7 @@
 			, COALESCE(tb.publish_dt, '') AS publish_dt
 			, COALESCE(tb.book_details, '') AS book_details
 			, COALESCE(tb.isbn, '') AS isbn
-			, tfm.file_seq AS thumb_url 
+			, tfm.file_seq AS thumb_seq 
 			, COALESCE(tbl.books_amount, 0) AS books_amount
 			, COALESCE(tbl.sell_amount, 0) AS sell_amount
 		FROM
@@ -87,7 +87,7 @@
 			, COALESCE(tb.publish_dt, '') AS publish_dt
 			, COALESCE(tb.book_details, '') AS book_details
 			, COALESCE(tb.isbn, '') AS isbn
-			, CONCAT(#{thumbUrl}, tfm.file_seq) AS thumb_url 
+			, tfm.file_seq AS thumb_seq 
 			, COALESCE(tbl.books_amount, 0) AS books_amount
 			, COALESCE(tbl.sell_amount, 0) AS sell_amount
 		FROM
