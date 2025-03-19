@@ -6,7 +6,7 @@
 		SELECT
 			COUNT(tb.id) AS total_record
 		FROM
-			tb_books tb
+			hun_test.tb_books tb
 		WHERE
 			tb.del_yn <![CDATA[<>]]> 'Y'
 			<if test='searchKeyword != null and searchKeyword != ""'>
@@ -32,35 +32,35 @@
 			, COALESCE(tbl.books_amount, 0) AS books_amount
 			, COALESCE(tbl.sell_amount, 0) AS sell_amount
 		FROM
-			tb_books tb 
+			hun_test.tb_books tb 
 		LEFT JOIN
 			(
 			SELECT
 				id
 				, SUM(
 					CASE 
-						WHEN `type` = 'O' OR `type` = 'S' THEN books_amount -1
+						WHEN type = 'O' OR type = 'S' THEN books_amount -1
 						ELSE books_amount
 					END
 				) AS books_amount
 				, SUM(
 					CASE 
-						WHEN `type` = 'S' THEN books_amount
-						WHEN `type` = 'R' THEN books_amount -1
+						WHEN type = 'S' THEN books_amount
+						WHEN type = 'R' THEN books_amount -1
 						ELSE 0
 					END
 				) AS sell_amount
 			FROM
-				tb_books_log tbl
+				hun_test.tb_books_log tbl
 			GROUP BY
 				id
 			) tbl 
 		ON
 			tb.id = tbl.id 
 		LEFT JOIN
-			tb_file_mng tfm 
+			hun_test.tb_file_mng tfm 
 		ON
-			tb.id = cast(tfm.rel_pk as unsigned)
+			tb.id = tfm.rel_pk::NUMERIC
 			AND tfm.rel_table = 'tb_books'
 			AND tfm.rel_column = 'thumbnail'
 			AND tfm.del_yn <![CDATA[<>]]> 'Y'
@@ -75,7 +75,7 @@
 				)
 			</if>
 		ORDER BY tb.id DESC
-		LIMIT #{startRow}, #{viewCnt}
+		OFFSET #{startRow} LIMIT #{viewCnt}
 	</select>
 	
 	<select id="selectBooksDetail" parameterType="hun.test.dto.BooksDto" resultType="hun.test.dto.BooksDto">
@@ -91,35 +91,35 @@
 			, COALESCE(tbl.books_amount, 0) AS books_amount
 			, COALESCE(tbl.sell_amount, 0) AS sell_amount
 		FROM
-			tb_books tb 
+			hun_test.tb_books tb 
 		LEFT JOIN
 			(
 			SELECT
 				id
 				, SUM(
 					CASE 
-						WHEN `type` = 'O' OR `type` = 'S' THEN books_amount * -1
+						WHEN type = 'O' OR type = 'S' THEN books_amount * -1
 						ELSE books_amount
 					END
 				) AS books_amount
 				, SUM(
 					CASE 
-						WHEN `type` = 'S' THEN books_amount
-						WHEN `type` = 'R' THEN books_amount * -1
+						WHEN type = 'S' THEN books_amount
+						WHEN type = 'R' THEN books_amount * -1
 						ELSE 0
 					END
 				) AS sell_amount
 			FROM
-				tb_books_log tbl
+				hun_test.tb_books_log tbl
 			GROUP BY
 				id
 			) tbl 
 		ON
 			tb.id = tbl.id 
 		LEFT JOIN
-			tb_file_mng tfm 
+			hun_test.tb_file_mng tfm 
 		ON
-			tb.id = cast(tfm.rel_pk as unsigned)
+			tb.id = tfm.rel_pk::NUMERIC
 			AND tfm.rel_table = 'tb_books'
 			AND tfm.rel_column = 'thumbnail'
 			AND tfm.del_yn <![CDATA[<>]]> 'Y'
@@ -128,8 +128,7 @@
 	</select>
 	
 	<insert id="addBooks" parameterType="hun.test.dto.BooksDto" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO tb_books
-		(
+		INSERT INTO hun_test.tb_books (
 			title
 			, author
 			, publisher
@@ -150,7 +149,7 @@
 	
 	<update id="updateBooks" parameterType="hun.test.dto.BooksDto">
 		UPDATE
-			tb_books
+			hun_test.tb_books
 		SET
 			title = #{title}
 			, author = #{author}
@@ -165,7 +164,7 @@
 	
 	<update id="deleteBooks" parameterType="hun.test.dto.BooksDto">
 		UPDATE
-			tb_books
+			hun_test.tb_books
 		SET
 			del_yn = 'Y'
 			, udt_dt = CURRENT_TIMESTAMP
@@ -177,11 +176,25 @@
 		SELECT
 			file_seq
 		FROM
-			tb_file_mng
+			hun_test.tb_file_mng
 		WHERE
 			rel_pk = #{arg0}
 			AND rel_table = 'tb_books'
 			AND rel_column = 'thumbnail'
 			AND del_yn <![CDATA[<>]]> 'Y'
 	</select>
+	
+	<insert id="insertBookCountLog" parameterType="hun.test.dto.BooksLogDto">
+		INSERT INTO hun_test.tb_books_log (
+			id
+			, type
+			, books_amount
+			, log_dt
+		) VALUES (
+			#{id}
+			, #{type}
+			, COALESCE(#{booksAmount}, 0)
+			, CURRENT_TIMESTAMP
+		)
+	</insert>
 </mapper>

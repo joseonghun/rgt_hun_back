@@ -115,7 +115,7 @@ public class ApiController {
 
 		BooksDto res = apiService.addBooksDto(booksDto, thumbnail);
 		if(res.getId() != null && !res.getId().equals("")) {
-			response.setObj(res);
+//			response.setObj(res);
 			response.setResponseCode(200);
 			response.setResponseMessage("정상적으로 저장되었습니다.");
 		} else {
@@ -140,7 +140,7 @@ public class ApiController {
 
 		BooksDto res = apiService.updateBooksDto(booksDto, thumbnail);
 		if(res.getId() != null && !res.getId().equals("")) {
-			response.setObj(res);
+//			response.setObj(res);
 			response.setResponseCode(200);
 			response.setResponseMessage("정상적으로 저장되었습니다.");
 		} else {
@@ -157,14 +157,13 @@ public class ApiController {
 	 */
 	@DeleteMapping("/books/{id}")
 	public ResponseEntity<ResponseDto<BooksDto>> deleteBooks(@PathVariable("id") String id) {
-		System.out.println(id);
 		ResponseDto<BooksDto> response = new ResponseDto<>();
 		response.setResponseCode(500);
 		response.setResponseMessage("삭제중 오류가 발생했습니다.");
 
 		int res = apiService.deleteBooks(id);
 		if(res > 0) {
-			response.setObj(res);
+//			response.setObj(res);
 			response.setResponseCode(200);
 			response.setResponseMessage("정상적으로 삭제되었습니다.");
 		} else {

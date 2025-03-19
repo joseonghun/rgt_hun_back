@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import hun.test.dto.BooksDto;
+import hun.test.dto.BooksLogDto;
 import hun.test.dto.CommonDto;
 
 @Mapper
@@ -22,4 +23,6 @@ public interface ApiMapper {
 	int deleteBooks(BooksDto booksDto);
 	
 	Integer selectThumbFile(String arg0);
+	
+	void insertBookCountLog(BooksLogDto bookDto);
 }

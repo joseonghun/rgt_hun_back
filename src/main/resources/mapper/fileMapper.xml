@@ -3,7 +3,7 @@
 <mapper namespace="hun.test.mapper.FileMapper">
 
 	<insert id="saveFile" parameterType="hun.test.dto.FileMngDto" useGeneratedKeys="true" keyProperty="file_seq">
-		INSERT INTO tb_file_mng
+		INSERT INTO hun_test.tb_file_mng
 		(
 			origin_file_nm,
 			file_path,
@@ -43,7 +43,7 @@
 			, del_yn
 			, crt_dt
 		FROM
-			tb_file_mng
+			hun_test.tb_file_mng
 		WHERE
 			file_seq = #{fileSeq}
 			AND del_yn <![CDATA[<>]]> 'Y'
@@ -51,7 +51,7 @@
 	
 	<update id="deleteFile" parameterType="hun.test.dto.FileMngDto">
 		UPDATE
-			tb_file_mng
+			hun_test.tb_file_mng
 		SET
 			del_yn = 'Y'
 			, udt_dt = CURRENT_TIMESTAMP

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import hun.test.dto.BooksDto;
+import hun.test.dto.BooksLogDto;
 import hun.test.dto.CommonDto;
 import hun.test.dto.FileMngDto;
 import hun.test.mapper.ApiMapper;
@@ -68,6 +69,14 @@ public class ApiService {
 		if(thumbnail != null) {
 			FileMngDto fileDto = fileService.saveUploadFile(thumbnail, "tb_books", "thumbnail", String.valueOf(booksDto.getId()));
 		}
+
+		// 로그 저장
+		BooksLogDto logDto = new BooksLogDto();
+		logDto.setId(booksDto.getId());
+		logDto.setType("I");
+		logDto.setBooksAmount(booksDto.getBooksAmount());
+		apiMapper.insertBookCountLog(logDto);
+		
 		return booksDto;
 	}
 	
@@ -78,6 +87,7 @@ public class ApiService {
 	 * @return
 	 */
 	public BooksDto updateBooksDto(BooksDto booksDto, MultipartFile thumbnail) {
+		BooksDto oldBooks = apiMapper.selectBooksDetail(booksDto);
 		apiMapper.updateBooks(booksDto);
 
 		if(thumbnail != null) {
@@ -90,6 +100,15 @@ public class ApiService {
 			// 신규 파일 저장
 			FileMngDto fileDto = fileService.saveUploadFile(thumbnail, "tb_books", "thumbnail", String.valueOf(booksDto.getId()));
 		}
+
+		// 로그 저장
+		if(oldBooks.getBooksAmount() != booksDto.getBooksAmount()) {
+			BooksLogDto logDto = new BooksLogDto();
+			logDto.setId(booksDto.getId());
+			logDto.setType("M");
+			logDto.setBooksAmount(booksDto.getBooksAmount() - oldBooks.getBooksAmount());
+			apiMapper.insertBookCountLog(logDto);
+		}
 		return booksDto;
 	}
 	
@@ -101,12 +120,20 @@ public class ApiService {
 	public int deleteBooks(String id) {
 		BooksDto booksDto = new BooksDto();
 		booksDto.setId(Integer.parseInt(id));
+		booksDto.setThumbUrl("");	// 에러 방지용
+		BooksDto oldBooks = apiMapper.selectBooksDetail(booksDto);
 		
 		// 기존 파일 제거
 		Integer thumbId = apiMapper.selectThumbFile(id);
 		if(thumbId != null && thumbId > 0) {
 			fileService.deleteFile(thumbId);
 		}
+		// 로그 저장
+		BooksLogDto logDto = new BooksLogDto();
+		logDto.setId(Integer.parseInt(id));
+		logDto.setType("D");
+		logDto.setBooksAmount(oldBooks.getBooksAmount());
+		apiMapper.insertBookCountLog(logDto);
 		
 		return apiMapper.deleteBooks(booksDto);
 	}
