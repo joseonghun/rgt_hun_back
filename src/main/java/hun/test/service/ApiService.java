@@ -52,6 +52,9 @@ public class ApiService {
 	 * @return
 	 */
 	public BooksDto getBooksDetail(BooksDto booksDto, HttpServletRequest request) {
+		System.out.println("schema : " + request.getScheme());
+		System.out.println("serverName : " + request.getServerName());
+		System.out.println("port : " + request.getServerPort());
 		String thumbPath = request.getRequestURL().toString().replace(request.getRequestURI(), "/api/downFiles/");
 		booksDto.setThumbUrl(thumbPath);
 		return apiMapper.selectBooksDetail(booksDto);
