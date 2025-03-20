@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -113,7 +114,7 @@ public class ApiController {
 	 * @return
 	 */
 	@PostMapping("/books")
-	public ResponseEntity<ResponseDto<BooksDto>> addBooks(@ModelAttribute BooksDto booksDto, @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail) {
+	public ResponseEntity<ResponseDto<BooksDto>> addBooks(@ModelAttribute BooksDto booksDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
 		ResponseDto<BooksDto> response = new ResponseDto<>();
 		response.setResponseCode(500);
 		response.setResponseMessage("저장중 오류가 발생했습니다.");
@@ -138,12 +139,12 @@ public class ApiController {
 	 * @return
 	 */
 	@PutMapping("/books/{id}")
-	public ResponseEntity<ResponseDto<BooksDto>> updateBooks(@PathVariable("id") String id, @ModelAttribute BooksDto booksDto, @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail) {
+	public ResponseEntity<ResponseDto<BooksDto>> updateBooks(@PathVariable("id") String id, @ModelAttribute BooksDto booksDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
 		ResponseDto<BooksDto> response = new ResponseDto<>();
 		response.setResponseCode(500);
 		response.setResponseMessage("저장중 오류가 발생했습니다.");
-
 		BooksDto res = apiService.updateBooksDto(booksDto, thumbnail);
+
 		if(res.getId() != null && !res.getId().equals("")) {
 //			response.setObj(res);
 			response.setResponseCode(200);
