@@ -14,7 +14,7 @@
 					tb.title LIKE CONCAT('%', #{searchKeyword}, '%')
 					OR tb.author LIKE CONCAT('%', #{searchKeyword}, '%')
 					OR tb.publisher LIKE CONCAT('%', #{searchKeyword}, '%')
-					OR tb.bookDetails LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.book_details LIKE CONCAT('%', #{searchKeyword}, '%')
 				)
 			</if>
 	</select>
@@ -71,7 +71,7 @@
 					tb.title LIKE CONCAT('%', #{searchKeyword}, '%')
 					OR tb.author LIKE CONCAT('%', #{searchKeyword}, '%')
 					OR tb.publisher LIKE CONCAT('%', #{searchKeyword}, '%')
-					OR tb.bookDetails LIKE CONCAT('%', #{searchKeyword}, '%')
+					OR tb.book_details LIKE CONCAT('%', #{searchKeyword}, '%')
 				)
 			</if>
 		ORDER BY tb.id DESC
