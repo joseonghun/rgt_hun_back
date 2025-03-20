@@ -60,7 +60,7 @@ public class ApiService {
 	public BooksDto addBooksDto(BooksDto booksDto, MultipartFile thumbnail) {
 		apiMapper.addBooks(booksDto);
 
-		if(thumbnail != null) {
+		if(thumbnail != null && thumbnail.getOriginalFilename() != null && !thumbnail.getOriginalFilename().equals("")) {
 			FileMngDto fileDto = fileService.saveUploadFile(thumbnail, "tb_books", "thumbnail", String.valueOf(booksDto.getId()));
 		}
 
@@ -84,7 +84,7 @@ public class ApiService {
 		BooksDto oldBooks = apiMapper.selectBooksDetail(booksDto);
 		apiMapper.updateBooks(booksDto);
 
-		if(thumbnail != null) {
+		if(thumbnail != null && thumbnail.getOriginalFilename() != null && !thumbnail.getOriginalFilename().equals("")) {
 			// 기존 파일 제거
 			Integer thumbId = apiMapper.selectThumbFile(String.valueOf(booksDto.getId()));
 			if(thumbId != null && thumbId > 0) {

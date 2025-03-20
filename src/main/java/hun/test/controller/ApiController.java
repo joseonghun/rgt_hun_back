@@ -63,6 +63,11 @@ public class ApiController {
 			response.setTotalPages(CommonUtil.setTotalPage(commonDto));
 			
 			list = apiService.getBooksList(commonDto, request);
+			int i = 0;
+			for(BooksDto dto : list) {
+				dto.setNo(commonDto.getTotalRecord() - commonDto.getStartRow() - i);
+				i++;
+			}
 			response.setResponseMessage("정상적으로 조회하였습니다.");
 			response.setList(list);
 		} else {
@@ -108,7 +113,7 @@ public class ApiController {
 	 * @return
 	 */
 	@PostMapping("/books")
-	public ResponseEntity<ResponseDto<BooksDto>> addBooks(@ModelAttribute BooksDto booksDto, @RequestParam("thumbnail") MultipartFile thumbnail) {
+	public ResponseEntity<ResponseDto<BooksDto>> addBooks(@ModelAttribute BooksDto booksDto, @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail) {
 		ResponseDto<BooksDto> response = new ResponseDto<>();
 		response.setResponseCode(500);
 		response.setResponseMessage("저장중 오류가 발생했습니다.");
@@ -133,7 +138,7 @@ public class ApiController {
 	 * @return
 	 */
 	@PutMapping("/books/{id}")
-	public ResponseEntity<ResponseDto<BooksDto>> updateBooks(@PathVariable("id") String id, @ModelAttribute BooksDto booksDto, @RequestParam("thumbnail") MultipartFile thumbnail) {
+	public ResponseEntity<ResponseDto<BooksDto>> updateBooks(@PathVariable("id") String id, @ModelAttribute BooksDto booksDto, @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail) {
 		ResponseDto<BooksDto> response = new ResponseDto<>();
 		response.setResponseCode(500);
 		response.setResponseMessage("저장중 오류가 발생했습니다.");

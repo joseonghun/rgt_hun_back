@@ -11,6 +11,9 @@ import lombok.ToString;
 @ToString
 public class BooksDto {
 	
+	// 화면 표시 건수 번호
+	private int no;
+	
 	// 도서 관리번호
 	private Integer id;
 	
